@@ -1,3 +1,3 @@
 module.exports = (req, res) => {
-    res.send(`Hello ${req.params.slug} : ${req.params.sluggy}`).end()
+    res.send(`Hello from two slug ${req.params.slug} : ${req.params.sluggy}`).end()
 }

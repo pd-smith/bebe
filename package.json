@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.js && node .bebe/server.js",
+    "clean": "rm -rf .bebe/",
+    "dev": "node src/index.js && node .bebe/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
