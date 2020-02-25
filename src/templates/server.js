@@ -9,13 +9,13 @@ function calculateImports(levelDescription) {
     };
     if (levelDescription.middleware) {
         imports.middleware = {
-            import: `const middleware = require('${join(levelDescription.parentDir, levelDescription.middleware)}');`,
+            import: `const middleware = require('${join(levelDescription.parentDir, levelDescription.middleware)}').default;`,
             mount: `app.use(middleware);`
         }
     }
     if (levelDescription.handler) {
         imports.handler = {
-            import: `const handler = require('${join(levelDescription.parentDir, levelDescription.handler)}');`,
+            import: `const handler = require('${join(levelDescription.parentDir, levelDescription.handler)}').default;`,
             mount: "app.all('/', handler);"
         }
     }
@@ -24,7 +24,7 @@ function calculateImports(levelDescription) {
         levelDescription.subRoutes.forEach((subRoute, index) => {
             if (subRoute.catchAll) {
                 imports.catchAll.push({
-                    import: `const setupRouter${index} = require('${subRoute.parentDir}');`,
+                    import: `const setupRouter${index} = require('${subRoute.parentDir}').default;`,
                     mount: `app.use('${subRoute.relativePath}', (req, res, next) => {
                         const fullPath = req.originalUrl.split('/').filter(Boolean);
                         const currentPath = req.path.split('/').filter(Boolean);
@@ -37,7 +37,7 @@ function calculateImports(levelDescription) {
             } else {
                 const type = subRoute.slugName ? 'slugs' : 'subRoutes'
                 imports[type].push({
-                    import: `const setupRouter${index} = require('${subRoute.parentDir}');`,
+                    import: `const setupRouter${index} = require('${subRoute.parentDir}').default;`,
                     mount: `app.use('${subRoute.relativePath}', setupRouter${index}());`
                 })
             }

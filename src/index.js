@@ -67,7 +67,7 @@ async function writeServerFile(description) {
 async function main() {
     const levelDescriptions = await analyzeFileLevel('routes', '', './routes')
     console.log(levelDescriptions)
-    await copyOverRoutes()
+    //await copyOverRoutes()
     await writeServerFile(levelDescriptions)
 }
 main()

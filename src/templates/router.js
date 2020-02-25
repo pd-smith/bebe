@@ -1,4 +1,4 @@
-
+const babel = require("@babel/parser")
 
 function calculateImports(levelDescription) {
     const imports = {
@@ -8,14 +8,14 @@ function calculateImports(levelDescription) {
     };
     if (levelDescription.middleware) {
         imports.middleware = {
-            import: `const middleware = require('./${levelDescription.middleware}');`,
+            import: `const middleware = require('./${levelDescription.middleware}').default;`,
             mount: `router.use(middleware);`
         }
     }
     if (levelDescription.handler) {
         const routerMethod = levelDescription.catchAll ? 'use' : 'all';
         imports.handler = {
-            import: `const handler = require('./${levelDescription.handler}');`,
+            import: `const handler = require('./${levelDescription.handler}').default;`,
             mount: `router.${routerMethod}('/', handler);`
         }
     }
@@ -24,7 +24,7 @@ function calculateImports(levelDescription) {
         levelDescription.subRoutes.forEach((subRoute, index) => {
             if (subRoute.catchAll) {
                 imports.catchAll.push({
-                    import: `const setupRouter${index} = require('${subRoute.relativeToParent}');`,
+                    import: `const setupRouter${index} = require('${subRoute.relativeToParent}').default;`,
                     mount: `router.use('${subRoute.relativePath}', (req, res, next) => {
                         const fullPath = req.originalUrl.split('/').filter(Boolean);
                         const currentPath = req.path.split('/').filter(Boolean);
@@ -37,7 +37,7 @@ function calculateImports(levelDescription) {
             } else {
                 const type = subRoute.slugName ? 'slugs' : 'subRoutes'
                 imports[type].push({
-                    import: `const setupRouter${index} = require('${subRoute.relativeToParent}');`,
+                    import: `const setupRouter${index} = require('${subRoute.relativeToParent}').default;`,
                     mount: `router.use('${subRoute.relativePath}', setupRouter${index}());`
                 })
             }
@@ -48,7 +48,7 @@ function calculateImports(levelDescription) {
 }
 
 function createTemplate({ middleware, handler, subRoutes, slugs, catchAll }) {
-    return (`
+    return `
     const { Router } = require('express');
     ${middleware ? middleware.import : ''}
     ${handler ? handler.import : ''}
@@ -56,7 +56,7 @@ function createTemplate({ middleware, handler, subRoutes, slugs, catchAll }) {
     ${slugs.map((slug) => slug.import).join('\n')}
     ${catchAll.map((catchAll) => catchAll.import).join('\n')}
 
-    module.exports = () => {
+    module.exports.default = () => {
         const router = Router({ mergeParams: true });
         ${middleware ? middleware.mount : ''}
         ${subRoutes.map((subRoute) => subRoute.mount).join('\n')}
@@ -65,7 +65,7 @@ function createTemplate({ middleware, handler, subRoutes, slugs, catchAll }) {
         ${catchAll.map((catchAll) => catchAll.mount).join('\n')}
 
         return router;
-    };`)
+    };`
 }
 
 function getServerFile(levelDescription) {
