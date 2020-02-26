@@ -8,14 +8,17 @@
     "compile:files:dev": "babel ./routes --out-dir .bebe/routes",
     "compile:files:prod": "babel ./routes --out-dir .bebe/routes --source-maps",
     "compile:bebe": "node src/index.js",
-    "dev": "npm run compile:files:dev && npm run compile:bebe && node .bebe/server.js",
+    "start": "node .bebe/server.js",
+    "dev": "npm run compile:bebe",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@babel/parser": "^7.8.4",
-    "express": "^4.17.1"
+    "chalk": "^3.0.0",
+    "express": "^4.17.1",
+    "watch": "^1.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",

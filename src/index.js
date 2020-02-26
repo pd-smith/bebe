@@ -1,4 +1,11 @@
 const fs = require('fs-extra');
+const watch = require('watch');
+const path = require('path');
+const chalk = require('chalk');
+const util = require('util');
+const fork = require('child_process').fork;
+const execAsPromise = util.promisify(require('child_process').exec);
+
 const { join } = require('./util')
 const createServerFile = require('./templates/server')
 const createRouterFile = require('./templates/router')
@@ -43,15 +50,10 @@ async function analyzeFileLevel(directory, basePath, parentDir) {
     return levelDescription
 }
 
-async function copyOverRoutes() {
-    return fs.copy('./routes', '.bebe/routes')
-}
-
 async function writeRouterFile(description) {
     if (description.handler) {
         await fs.rename(join('.bebe', description.parentDir, 'index.js'), join('.bebe', description.parentDir, 'handler.js'))
     }
-    console.log(description.relativePath)
     await fs.writeFile(join('.bebe', description.parentDir, 'index.js'), createRouterFile(description))
     return description.subRoutes.map(writeRouterFile)
 }
@@ -66,8 +68,20 @@ async function writeServerFile(description) {
 
 async function main() {
     const levelDescriptions = await analyzeFileLevel('routes', '', './routes')
-    console.log(levelDescriptions)
-    //await copyOverRoutes()
     await writeServerFile(levelDescriptions)
 }
-main()
+
+let childProcess;
+watch.watchTree('./routes', async () => {
+    if (childProcess) {
+        childProcess.kill('SIGINT')
+    }
+    const { stderr } = await execAsPromise('npm run compile:files:dev');
+    console.log(chalk.red(stderr));
+    await main().then(() => { 
+        childProcess = fork(path.join('.bebe/server.js'));
+        childProcess.on('exit', (code) => {
+            console.log(chalk.yellow('Changes detected. Restarting server...'));
+        });
+    })
+})

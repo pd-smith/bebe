@@ -1,3 +1,3 @@
 export default (req, res) => {
-    res.send('Hello World').end()
+    res.send('Hello Worlds9').end()
 }
