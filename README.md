@@ -3,7 +3,9 @@
 To start:
 
 ```sh
-npm run dev
+bebe dev # Makes a dev server
+
+bebe export # Exports compiled express server to .bebe/
 ```
 
 
@@ -22,6 +24,6 @@ npm run dev
 *Note* slugs and catch alls can use any name.
 
 Current Limitations:
-* only supports nodejs syntax
+* only supports @babel/preset-env syntax
 * relationships for complex routing have not been ironed out all the way (should a double slug route before a catch all ?)
 

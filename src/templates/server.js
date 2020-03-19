@@ -66,7 +66,7 @@ function setUpRoutes() {
     ${catchAll.map((catchAll) => catchAll.mount).join('\n')}
 }
 setUpRoutes()
-app.listen(port, () => console.log(\`Example app listening on port \${port}!\`))
+app.listen(port, () => console.log(\`Server listening on port \${port}!\`))
     `)
 }
 

@@ -1,10 +1,11 @@
+#!/usr/bin/env node
+
 const fs = require('fs-extra');
 const watch = require('watch');
 const path = require('path');
 const chalk = require('chalk');
-const util = require('util');
 const fork = require('child_process').fork;
-const execAsPromise = util.promisify(require('child_process').exec);
+const babel = require('./util/babel')
 
 const { join } = require('./util')
 const createServerFile = require('./templates/server')
@@ -71,17 +72,61 @@ async function main() {
     await writeServerFile(levelDescriptions)
 }
 
-let childProcess;
-watch.watchTree('./routes', async () => {
-    if (childProcess) {
-        childProcess.kill('SIGINT')
+
+async function exportServer() {
+    const { stderr: compileStderr } = await babel('routes', '.bebe/routes');
+    if (compileStderr) {
+        throw new Error(`Failed to export server: \n ${stderr}`)
     }
-    const { stderr } = await execAsPromise('npm run compile:files:dev');
-    console.log(chalk.red(stderr));
-    await main().then(() => { 
-        childProcess = fork(path.join('.bebe/server.js'));
-        childProcess.on('exit', (code) => {
-            console.log(chalk.yellow('Changes detected. Restarting server...'));
-        });
+    await main()
+    console.log(chalk.green("Successfully Exported server to .bebe/"))
+}
+
+function devServer() {
+    let childProcess;
+    watch.watchTree('./routes', async () => {
+        if (childProcess) {
+            childProcess.kill('SIGINT')
+        }
+        const { stderr } = await babel('routes', '.bebe/routes');
+        if (stderr) console.log(chalk.red(stderr));
+        await main().then(() => {
+            childProcess = fork(path.join('.bebe/server.js'));
+            childProcess.on('exit', (code) => {
+                console.log(chalk.yellow('Changes detected. Restarting server...'));
+            });
+        })
     })
-})
+}
+
+(async function () {
+    const [, , command] = process.argv;
+    try {
+        switch (command) {
+            case 'dev': {
+                await devServer()
+                return;
+            }
+            case 'export': {
+                await exportServer()
+                return;
+            }
+            case 'help': {
+                console.log(chalk.green(`
+Commands:
+        
+    dev - Run a dev server. Hot reloads on edits
+                
+    export - Builds an executable express server
+                `));
+                return;
+            }
+            default: {
+                console.log(chalk.yellow(`Run "bebe help" for options`));
+                return;
+            }
+        }
+    } catch (error) {
+        console.error(error)
+    }
+})()

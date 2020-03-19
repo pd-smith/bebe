@@ -1,6 +1,6 @@
 {
   "name": "bebe",
-  "version": "1.0.0",
+  "version": "0.0.1-beta",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,12 +12,21 @@
     "dev": "npm run compile:bebe",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "bebe": "./src/index.js"
+  },
   "author": "",
   "license": "ISC",
+  "peerDependencies": {
+    "express": "4.x"
+  },
   "dependencies": {
     "@babel/parser": "^7.8.4",
     "chalk": "^3.0.0",
     "express": "^4.17.1",
+    "globby": "^11.0.0",
+    "nodemon": "^2.0.2",
+    "rimraf": "^3.0.2",
     "watch": "^1.0.2"
   },
   "devDependencies": {
