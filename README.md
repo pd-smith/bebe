@@ -3,6 +3,8 @@
 To start:
 
 ```sh
+npm install --save @web-tk/bebe
+
 bebe dev # Makes a dev server
 
 bebe export # Exports compiled express server to .bebe/
