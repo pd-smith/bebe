@@ -1,11 +1,12 @@
 {
   "name": "@web-tk/bebe",
-  "version": "0.0.2-beta",
+  "version": "0.0.3-beta",
   "description": "",
   "main": "src/index.js",
   "files": [
     "node_modules/",
-    "src/"
+    "src/",
+    "babel.config.js"
   ],
   "publishConfig": {
     "access": "public"
