@@ -2,7 +2,14 @@
   "name": "@web-tk/bebe",
   "version": "0.0.1-beta",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
+  "files": [
+    "node_modules/",
+    "src/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "clean": "rm -rf .bebe/",
     "compile:files:dev": "babel ./routes --out-dir .bebe/routes",
