@@ -29,3 +29,10 @@ Current Limitations:
 * only supports @babel/preset-env syntax
 * relationships for complex routing have not been ironed out all the way (should a double slug route before a catch all ?)
 
+
+Ideas / TODO: 
+
+* route level error handling
+* async route error handling
+* async middleware error handling
+

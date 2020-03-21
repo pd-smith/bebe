@@ -64,6 +64,10 @@ function setUpRoutes() {
     ${handler ? handler.mount : ''}
     ${slugs.map((slug) => slug.mount).join('\n')}
     ${catchAll.map((catchAll) => catchAll.mount).join('\n')}
+
+    app.use((err, req, res, next) => {
+        res.status(err.status || 500).end();
+    })
 }
 setUpRoutes()
 app.listen(port, () => console.log(\`Server listening on port \${port}!\`))
