@@ -20,6 +20,13 @@ function calculateImports(levelDescription) {
         }
     }
 
+    if (levelDescription.error) {
+        imports.error = {
+            import: `const error = require('${join(levelDescription.parentDir, levelDescription.error)}').default;`,
+            mount: "app.use(error);"
+        }
+    }
+
     if (levelDescription.subRoutes) {
         levelDescription.subRoutes.forEach((subRoute, index) => {
             if (subRoute.catchAll) {
@@ -47,10 +54,11 @@ function calculateImports(levelDescription) {
     return imports;
 }
 
-function createTemplate({ middleware, handler, subRoutes, slugs, catchAll }) {
+function createTemplate({ middleware, handler, subRoutes, slugs, catchAll, error }) {
     return (`
 const express = require('express')
 ${middleware ? middleware.import : ''}
+${error ? error.import : ''}
 ${handler ? handler.import : ''}
 ${subRoutes.map((subRoute) => subRoute.import).join('\n')}
 ${slugs.map((slug) => slug.import).join('\n')}
@@ -64,6 +72,7 @@ function setUpRoutes() {
     ${handler ? handler.mount : ''}
     ${slugs.map((slug) => slug.mount).join('\n')}
     ${catchAll.map((catchAll) => catchAll.mount).join('\n')}
+    ${error ? error.mount : ''}
 
     app.use((err, req, res, next) => {
         res.status(err.status || 500).end();

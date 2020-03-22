@@ -15,7 +15,7 @@ bebe export # Exports compiled express server to .bebe/
 
 1. there must be a `route` file
 2. `route` represents `/`
-3. inside you can define both a `index.js` and a `middleware.js` (this can be done at any path)
+3. inside you can define a `middleware.js`, `index.js`, and `error.js` file with are mounted on a given router in that order (this can be done at any path)
 4. middleware will always be mounted before handlers
 5. inside routes (or any directory in routes) you can define a path by creating a directory
  * ex. if you have `routes/foo/index.js`, a route for `/foo` will be created

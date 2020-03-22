@@ -41,6 +41,12 @@ async function analyzeFileLevel(directory, basePath, parentDir) {
         contents.splice(indexOfMiddlewareRouter, 1);
         levelDescription.middleware = 'middleware.js'
     }
+    const indexOfErrorRouter = contents.indexOf('error.js');
+    if (indexOfErrorRouter > -1) {
+        contents.splice(indexOfErrorRouter, 1);
+        levelDescription.error = 'error.js'
+
+    }
     const subRoutes = await Promise.all(contents.map(async (name) => {
         const lstatInfo = await fs.lstat(join('./', parentDir, name));
         if (lstatInfo.isDirectory()) {

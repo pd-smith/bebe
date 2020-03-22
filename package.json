@@ -17,7 +17,7 @@
     "compile:files:prod": "babel ./routes --out-dir .bebe/routes --source-maps",
     "compile:bebe": "node src/index.js",
     "start": "node .bebe/server.js",
-    "dev": "npm run compile:bebe",
+    "dev": "npm run compile:bebe -- dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
